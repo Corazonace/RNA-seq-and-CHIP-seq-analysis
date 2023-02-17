@@ -157,14 +157,18 @@ Furthermore, a differentially expressed gene can be up-regulated or down-regulat
 `stringtie [input_sorted_bam_file.sorted.bam] -o [output_gtf_file.gtf] -G [reference_annotation_gtf_file.gtf]`
 
 
+
 `###calculating FPKM with R###`
 
 `counts_fpkm <- read.table(“input_table_is_FeatureCounts_output_counts.txt”, header = TRUE, row.names = “Geneid”, sep = '\t', comment.char = "#", check.names = FALSE)`
 
-`for (clm in colnames(counts_fpkm)[column_of_1st_sample:column_of_last_sample]) {
-  col_fpkm=paste0(clm, "_FPKM")
-  total=sum(counts_fpkm[clm])
-  counts_fpkm[col_fpkm] = (counts_fpkm[clm]*10^6) / (counts_fpkm$Length*as.numeric(total)/1000)
+`for (clm in colnames(counts_fpkm)[column_of_1st_sample:column_of_last_sample]) {'
+
+  'col_fpkm=paste0(clm, "_FPKM")'
+  
+  'total=sum(counts_fpkm[clm])'
+  
+  'counts_fpkm[col_fpkm] = (counts_fpkm[clm]*10^6) / (counts_fpkm$Length*as.numeric(total)/1000)
 }`
 
 ## Finding up-regulated gene or down-regulated gene
