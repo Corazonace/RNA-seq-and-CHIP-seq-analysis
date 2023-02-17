@@ -61,8 +61,6 @@ The second step is to map the raw sequencing data to the genome using alignment 
 
 After alignment, SAM files are going to be converted into BAM files for further analysis. BAM is a compressed binary version of the SAM format, while SAM is a text-based format. SAM files are human-readable and can be viewed and edited using text editors, but they can be large in size, especially for large datasets. BAM files can be created by converting SAM files to a binary format using a tool such as SAMtools. The binary format allows for efficient storage and retrieval of the alignment data, leading to faster processing times and reduced storage requirements. The “view” function converts the SAM file to a BAM file without sorting it while the “sort” function can produce a sorted BAM file. The “index” function creates an index for sorted BAM files which is necessary for several analyses, such as visualization via IGV. 
 
-`###converting sam file to bam file###`
-
 `module load samtools/1.10`
 
 `samtools view -bS [input_sam_file.sam] > [output_bam_file.bam]`
@@ -113,8 +111,6 @@ The first step of identifying a differentially expressed gene is to summarize th
 ## Differential expression analysis
 
 After obtaining the read counts matrix, differential expression analysis can be performed using R packages such as DESeq2, edgeR, or Limma to identify differentially expressed genes between different conditions or samples. DESeq2 uses a negative binomial statistical model to test for differential expression, taking into account both the mean and dispersion of gene expression levels across samples. It requires an unnormalized read counts matrix as input. DESeq2 also provides a wide range of visualization and exploration tools, such as principal component analysis (PCA). 
-
-`###using DESeq2 to perform differential expression analysis###`
 
 `library(DESeq2)`
 
@@ -172,8 +168,6 @@ Furthermore, a differentially expressed gene can be up-regulated or down-regulat
 
 Up-regulated genes are genes that are activated and expressed at a higher level than their baseline expression (controlled sample). Down-regulation genes, in contrast, are genes that are suppressed or expressed at a lower level than their baseline expression. Both genes play important roles in biological processes and development of various diseases, such as cancer, metabolic disorders and so on. Up-regulated and down-regulated genes can be distinguished based on the log2FoldChange values from the summary of DESeq2 differential expression analysis. A positive log2FoldChange value indicates an increase of expression while a negative value means a decrease of expression. The classification process can be simply completed by the “Filter” funciton in excel or using the example R script below. 
 
-`###distinguishing up-regulated from down-regulated genes###`
-
 `up_regulated <- analysis_0.01[which(analysis_0.01$log2FoldChange>0), ]`
 
 `down_regulated <- analysis_0.01[which(analysis_0.01$log2FoldChange<0), ]`
@@ -184,8 +178,6 @@ Up-regulated genes are genes that are activated and expressed at a higher level 
 
 PCR duplicates in ChIP-seq data can arise when multiple copies of the same DNA fragment are amplified during library preparation and sequencing. These duplicates can significantly impact the analysis of ChIP-seq data, leading to the over-representation of certain regions and artificially inflated signal levels. The following is an example of removing PCR duplication with Picard.
 
-`###removing PCR duplication###`
-
 `module load picard`
 
 `java -jar $EBROOTPICARD/picard.jar MarkDuplicates I=[input_sorted_bam_file.sorted.bam] O=[output_bam_file.bam] M=[output_remove_duplicates_metrics.txt] REMOVE_DUPLICATES=TRUE ASSUME_SORTED=TRUE`
@@ -194,8 +186,6 @@ PCR duplicates in ChIP-seq data can arise when multiple copies of the same DNA f
 
 A binding site is a specific location on a DNA molecule where a transcription factor or other DNA-binding protein binds to regulate gene expression. The binding site can be a few base pairs in length and can be located within a gene promoter or enhancer region. The binding site determines the specificity of the protein-DNA interaction, and different proteins may bind to different binding sites to control gene expression. The binding site of a transcription factor can be found using peak-calling tools such as MACS2. The output of MACS2 contains six files: two bdg files, a summit bed file, a narrowpeak file, an excel file, and an R file. The narrowpeak file, which is normally used for downstream analysis, can be converted into a bed file by simply changing the suffix to .bed. A bed file is a tab-delimited text file that contains the genomic coordinates of each identified peak. It has six columns including the name of the chromosome where the peak is located, the start and end position of the peak, the name of the peak, a score that reflects the relative strength, and a strand that represents the orientation of the peak.
 
-`####peak_calling with q-value 0.01###`
-
 `module load macs2`
 
 `macs2 callpeak -t [output_rmdup_treated_sample.bam] -c [output_rmdup_controlled_sample.bam] -f BAM -g hs -B -q 0.01 -o [/path/to/output_directory]`
@@ -203,8 +193,6 @@ A binding site is a specific location on a DNA molecule where a transcription fa
 ## Distinguishing promoters and enhancers
 
 Binding sites can be distinguished into two categories: promoters and enhancers. Promoters are regions of DNA located near the transcription start site(TSS). They contain binding sites for transcription factors that are involved in the initiation of transcription. Enhancers, on the other hand, are distal cis-regulatory elements located away from the gene's promoter and can be located upstream, downstream, or even within introns of a gene. They contain binding sites for transcription factors that can modulate gene expression. The BETA function can give the transcription start site (TSS) information. The TSS is the specific location on the DNA where the transcription of a gene begins. Promoter regions are usually 2kb upstream or downstream of TSS while enhancers are 2~10kb upstream or downstream of TSS. The input of BETA is the peak-calling bed file from MACS2. BETA-minus can output two txt files: “Targets_predicted_by_BETA” demonstrates the TSS, and “Targets_genes_associated_peaks” contains the information of binding sites that associate with each TSS, including the distance from TSS. Promoters regions can be found by filtering out the distances that is smaller than 2000 but greater than -2000. Similarly, enhancers region are the peaks with a distance greater than 2000 or smaller than 2000. 
-
-`###looking for TSS and distinguishing promoters from enhancers###`
 
 `BindingSite <- read.table("BETA_Targets_genes_associated_peaks.txt", header = TRUE, sep = '\t', comment.char = "#", check.names = FALSE)`
 
