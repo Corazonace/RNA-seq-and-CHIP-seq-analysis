@@ -3,6 +3,7 @@ RNA-seq and CHIP-seq are two popular high-throughput sequencing technologies use
 1. Quality control
 Quality control: 
 The very first step is to check the quality of raw sequencing data. It can be done with FASTQC software or using the FASTQC module on Rivanna in a Linux environment. The input should be a fastq file. FASTQC will output an HTML file that shows different aspects of the quality of the raw sequencing data, such as per base sequence quality, per base sequence content, and so on. 
+
 ###quality control with FASTQC###
 module load fastqc
 fastqc -o [output_directory] [input_raw_data.fastq.gz]
