@@ -90,7 +90,7 @@ The first step of identifying a differentially expressed gene is to summarize th
 `featureCounts -t exon -g gene_name -a [input_annotation_gtf_file.gtf] -o [output_counts.txt][input_sorted_bam_file_1.sorted.bam] [input_sorted_bam_file_2.sorted.bam]`
 
 
-`###using FeatureCounts in R###
+`###using FeatureCounts in R###`
 
 `module load goolf/7.1.0_3.1.4  R`
 
@@ -131,17 +131,20 @@ dds <- DESeqDataSetFromMatrix(countData = count, colData = samples, design = ~ s
 
 `dds <- DESeq(dds)`
 
-`analysis_result <- results(dds, contrast = c("sample", “treated”, “control”), parallel = TRUE)
-analysis_0.01 <- analysis_result[which(analysis_result$padj<0.01), ] `
+`analysis_result <- results(dds, contrast = c("sample", “treated”, “control”), parallel = TRUE)`
+
+`analysis_0.01 <- analysis_result[which(analysis_result$padj<0.01), ]`
 
 `write.csv(analysis_0.01, file = “analysis_0.01.csv") `
 
 
 `#draw PCA graph and conduct PCA`
 
-`vsd <- vst(dds, blind = F)
-plotPCA(vsd, intgroup = c(“sample”))
-plotPCA(vsd, intgroup = c("sample"), returnData = TRUE)`
+`vsd <- vst(dds, blind = F)`
+
+`plotPCA(vsd, intgroup = c(“sample”))`
+
+`plotPCA(vsd, intgroup = c("sample"), returnData = TRUE)`
 
 ## Calculating FPKM
 
