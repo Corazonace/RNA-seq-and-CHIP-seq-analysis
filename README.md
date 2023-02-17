@@ -7,8 +7,6 @@ RNA-seq and CHIP-seq are two popular high-throughput sequencing technologies use
 
 The very first step is to check the quality of raw sequencing data. It can be done with FASTQC software or using the FASTQC module on Rivanna in a Linux environment. The input should be a fastq file. FASTQC will output an HTML file that shows different aspects of the quality of the raw sequencing data, such as per base sequence quality, per base sequence content, and so on. 
 
-`###quality control with FASTQC###`
-
 `module load fastqc`
 
 `fastqc -o [output_directory] [input_raw_data.fastq.gz]`
@@ -16,8 +14,6 @@ The very first step is to check the quality of raw sequencing data. It can be do
 ## Data trimming 
 
 If the data fails in many modules, it’s better to trim the reads to remove adapter sequences and low-quality regions. Trimmomatic is a good tool for doing this. The following example demonstrates a trimmomatic command for paired-end data. 
-
-`###trimming###`
 
 `module load trimmomatic/0.39`
 
@@ -35,6 +31,7 @@ The second step is to map the raw sequencing data to the genome using alignment 
 
 `tar -zxvf hg38_genome.tar.gz` 
 
+
 `###alignment with hisat2 (RNA-seq)###`
 
 `module load gcc/9.2.0`
@@ -45,11 +42,14 @@ The second step is to map the raw sequencing data to the genome using alignment 
 
 `hisat2 -x genome -1 [input_forward_paired_fastq.gz] -2 [input_reverse_paired_fastq.gz] -S [output_sam_file.sam]`
 
+
+
 `###creating index (downloaded from Bowtie2 official website)###`
 
 `wget https://genome-idx.s3.amazonaws.com/bt/GRCh38_noalt_as.zip`
 
 `unzip GRCh38_noalt_as.zip`
+
 
 `###alignment with bowtie2 (CHIP-seq)###`
 
@@ -86,11 +86,14 @@ The first step of identifying a differentially expressed gene is to summarize th
 
 `gunzip gencode.v43.basic.annotation.gtf.gz`
 
+
 `###using FeatureCounts in Linux###`
 
 `featureCounts -t exon -g gene_name -a [input_annotation_gtf_file.gtf] -o [output_counts.txt][input_sorted_bam_file_1.sorted.bam] [input_sorted_bam_file_2.sorted.bam]`
 
+
 `###using FeatureCounts in R###
+
 `module load goolf/7.1.0_3.1.4  R`
 
 `R`
@@ -123,8 +126,6 @@ After obtaining the read counts matrix, differential expression analysis can be 
 
 `counts <- counts[rowSums(counts)>10, ] #select rows that are significant (sum of counts in all samples that is greater than 10)`
 
-`#construct dds`
-
 `samples <- data.frame(sampleID = c(“treated_sample_1”, “treated_sample_2”, “control_sample_1”, “control_sample_2”), sample = c(“treated”, “treated”, “control”, “control”))
 row.names(samples) <- samples$sampleID
 samples$sample <- factor(samples$sample, level = c(“treated”, “control”))`
@@ -132,16 +133,13 @@ samples$sample <- factor(samples$sample, level = c(“treated”, “control”)
 `count <- as.matrix(counts[row.names(samples)])
 dds <- DESeqDataSetFromMatrix(countData = count, colData = samples, design = ~ sample)`
 
-`#differntial expression analysis`
-
 `dds <- DESeq(dds)`
 
-`#see the result and extract significant genes`
-
 `analysis_result <- results(dds, contrast = c("sample", “treated”, “control”), parallel = TRUE)
-analysis_0.01 <- analysis_result[which(analysis_result$padj<0.01), ] #select significant results with adjusted p-value smaller than 0.01`
+analysis_0.01 <- analysis_result[which(analysis_result$padj<0.01), ] `
 
-`write.csv(analysis_0.01, file = “analysis_0.01.csv") #export result`
+`write.csv(analysis_0.01, file = “analysis_0.01.csv") `
+
 
 `#draw PCA graph and conduct PCA`
 
@@ -158,6 +156,7 @@ Furthermore, a differentially expressed gene can be up-regulated or down-regulat
 `module load gcc stringtie`
 
 `stringtie [input_sorted_bam_file.sorted.bam] -o [output_gtf_file.gtf] -G [reference_annotation_gtf_file.gtf]`
+
 
 `###calculating FPKM with R###`
 
